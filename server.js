@@ -20,14 +20,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
+// setting up the notes page
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 });
 
+// allowing you to get data about the notes
 app.get('/api/notes', (req, res) => {
     res.json(storedNotes);
 });
 
+// as a final precaution taking back to main page if the element after it doesn't exist in what was already covered
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/index.html'))
 });
@@ -35,27 +38,27 @@ app.get('*', (req, res) => {
 app.post('/api/notes', (req, res) => {
     // destructuring the items in req.body
     const { title, text } = req.body;
-
+    // veriftying that the destructured items are there
     if (title && text) {
         const newNote = {
             title,
             text, 
             id: uuidv4(),
         }; 
-
+        // reading the file that already exists and updating the information inside of it 
         fs.readFile('./db/db.json', 'utf8', (err, data) => {
             if (err) {
                 console.log(err);
             } else {
                 const parsedNotes = JSON.parse(data);
                 parsedNotes.push(newNote);
-
+                // overwriting the old file with the new information
                 fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), 
                     (writeErr) => writeErr ? console.error(writeErr) : console.log("Successfully Added the Note!")
                 );
             }
         })
-        
+        // defining the response that the user will receive 
         const response = {
             status: 'successfully made note',
             body: newNote,
@@ -74,5 +77,5 @@ app.post('/api/notes', (req, res) => {
 });
 
 app.listen(PORT, () => 
-    console.log(`Express server listneing on port ${PORT}`)
+    console.log(`Express server listening on port ${PORT}`)
 );
