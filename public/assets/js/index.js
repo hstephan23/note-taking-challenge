@@ -90,15 +90,19 @@ const handleNoteDelete = (e) => {
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
-
   if (activeNote.id === noteId) {
     activeNote = {};
   }
 
-  deleteNote(noteId).then(() => {
-    getAndRenderNotes();
-    renderActiveNote();
-  });
+  deleteNote(noteId).then(response => {
+    if (response.ok) {
+        console.log('Note deleted successfully!');
+        getAndRenderNotes();
+        renderActiveNote();
+    } else {
+        console.error('Error deleting note:', response.statusText);
+    }
+});
 };
 
 // Sets the activeNote and displays it
@@ -183,7 +187,6 @@ const renderNoteList = async (notes) => {
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => {
-  console.log('working');
   getNotes().then(renderNoteList);
 };
 

@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const storedNotes = require("./db/db.json");
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -37,6 +38,29 @@ app.get('/api/notes', (req, res) => {
         }
     });
 });
+
+// allowing you to delete it
+app.delete('/api/notes/:id', (req, res) => {
+    const noteID = req.params.id;
+    // pulls the index if it exists of the note that has an id equal to the note id 
+    const noteIndex = storedNotes.findIndex(note => note.id === noteID);
+
+    if (noteIndex !== -1) {
+        storedNotes.splice(noteIndex, 1);
+        // writes to the file the updated notes
+        fs.writeFile('./db/db.json', JSON.stringify(storedNotes, null, 4), (writeErr) => {
+            if (writeErr) {
+                console.log(writeErr);
+                res.status(500).json('Error in deleting note!');
+            } else {
+                console.log('Successfully deleted the note!');
+                res.status(200).json('Successfully deleted the note!')
+            }
+        })
+    } else {
+        res.status(404).json('Note not found!');
+    }
+})
 
 // as a final precaution taking back to main page if the element after it doesn't exist in what was already covered
 app.get('*', (req, res) => {
