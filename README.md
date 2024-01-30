@@ -6,6 +6,8 @@
 
   This is a project where we are able to generate a simple to do list from an inputed source. We gather information from a POST request and then using GET display the data that was input back. 
 
+![Alt text](<Screenshot 2024-01-29 at 9.09.53 PM.png>)
+
   ### Table of Contents
   * [Installation](#-Installation)
   * [Usage](#-Usage)
