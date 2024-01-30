@@ -2,10 +2,9 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const storedNotes = require("./db/db.json");
 const { v4: uuidv4 } = require('uuid');
 
-
+// use the correct port for when deployed or when a local host 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
@@ -42,25 +41,41 @@ app.get('/api/notes', (req, res) => {
 // allowing you to delete it
 app.delete('/api/notes/:id', (req, res) => {
     const noteID = req.params.id;
-    // pulls the index if it exists of the note that has an id equal to the note id 
-    const noteIndex = storedNotes.findIndex(note => note.id === noteID);
+    // have to read the updated database file
+    fs.readFile('./db/db.json', (err, data) => {
+        if (err) {
+            console.log(err);
+            return res.status(500).json('Error reading notes data');
+        }
 
-    if (noteIndex !== -1) {
-        storedNotes.splice(noteIndex, 1);
-        // writes to the file the updated notes
-        fs.writeFile('./db/db.json', JSON.stringify(storedNotes, null, 4), (writeErr) => {
-            if (writeErr) {
-                console.log(writeErr);
-                res.status(500).json('Error in deleting note!');
-            } else {
-                console.log('Successfully deleted the note!');
-                res.status(200).json('Successfully deleted the note!')
+        const storedNotes = JSON.parse(data); 
+        let noteIndex = -1;
+        // pulls the index if it exists of the note that has an id equal to the note id 
+        for (let i = 0; i < storedNotes.length; i++) {
+            if (storedNotes[i].id === noteID) {
+                noteIndex = i;
+                break;
             }
-        })
-    } else {
-        res.status(404).json('Note not found!');
-    }
-})
+        }
+        console.log(noteIndex);
+
+        if (noteIndex !== -1) {
+            storedNotes.splice(noteIndex, 1);
+            // writes to the file the updated notes
+            fs.writeFile('./db/db.json', JSON.stringify(storedNotes, null, 4), (writeErr) => {
+                if (writeErr) {
+                    console.log(writeErr);
+                    res.status(500).json('Error in deleting note!');
+                } else {
+                    console.log('Successfully deleted the note!');
+                    res.status(200).json('Successfully deleted the note!')
+                }
+            })
+        } else {
+            res.status(404).json('Note not found!');
+        }
+    });
+});
 
 
 app.post('/api/notes', (req, res) => {
