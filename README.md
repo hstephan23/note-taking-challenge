@@ -5,6 +5,9 @@
   ### Description
 
   This is a project where we are able to generate a simple to do list from an inputed source. We gather information from a POST request and then using GET display the data that was input back. 
+  
+  Here is a deployed link on [Heroku](https://note-taker-challenge-hstephan-3b8cc2818ba4.herokuapp.com)
+
 
 ![Alt text](<Screenshot 2024-01-29 at 9.09.53 PM.png>)
 
@@ -38,7 +41,7 @@
   https://opensource.org/license/mit/
 
   ## Contributing
-  Javascript and Node.js
+  Javascript and Node.js and Express
 
   ## Test
   
