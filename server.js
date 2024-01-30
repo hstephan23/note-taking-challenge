@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const storedNotes = require("./db/db.json");
 const { v4: uuidv4 } = require('uuid');
 
@@ -41,6 +42,20 @@ app.post('/api/notes', (req, res) => {
             text, 
             id: uuidv4(),
         }; 
+
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
+            if (err) {
+                console.log(err);
+            } else {
+                const parsedNotes = JSON.parse(data);
+                parsedNotes.push(newNote);
+
+                fs.writeFile('./db/db.json', JSON.stringify(parsedNotes, null, 4), 
+                    (writeErr) => writeErr ? console.error(writeErr) : console.log("Successfully Added the Note!")
+                );
+            }
+        })
+        
         const response = {
             status: 'successfully made note',
             body: newNote,
