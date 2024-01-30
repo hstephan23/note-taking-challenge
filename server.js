@@ -62,10 +62,6 @@ app.delete('/api/notes/:id', (req, res) => {
     }
 })
 
-// as a final precaution taking back to main page if the element after it doesn't exist in what was already covered
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public/index.html'))
-});
 
 app.post('/api/notes', (req, res) => {
     // destructuring the items in req.body
@@ -106,6 +102,11 @@ app.post('/api/notes', (req, res) => {
     console.info(req.rawHeaders);
     // log the request to the terminal
     console.info(`${req.method} request received`);
+});
+
+// as a final precaution taking back to main page if the element after it doesn't exist in what was already covered
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '/public/index.html'))
 });
 
 app.listen(PORT, () => 
