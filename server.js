@@ -1,7 +1,7 @@
+// required pieces for everything to work 
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-const storedNotes = require("./db/db.json");
 const { v4: uuidv4 } = require('uuid');
 
 
@@ -25,9 +25,17 @@ app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, '/public/notes.html'))
 });
 
-// allowing you to get data about the notes
+// allowing you to get data about the notes, need to read the file so that the file information is updated everytime
 app.get('/api/notes', (req, res) => {
-    res.json(storedNotes);
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json('Error reading notes data');
+        } else {
+            const parsedNotes = JSON.parse(data);
+            res.json(parsedNotes);
+        }
+    });
 });
 
 // as a final precaution taking back to main page if the element after it doesn't exist in what was already covered
